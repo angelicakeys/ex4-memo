@@ -13,7 +13,7 @@ export default function Controle({etatTaches, utilisateur}) {
         exclusive={true} 
       >
         <ToggleButton value={'toutes'}>Toutes</ToggleButton>
-        <ToggleButton value={true}>Complétées</ToggleButton>
+        <ToggleButton value={true}> Complétées</ToggleButton>
         <ToggleButton value={false}>Actives</ToggleButton>
       </ToggleButtonGroup>
       <span className="compte">

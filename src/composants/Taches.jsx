@@ -3,6 +3,9 @@ import './Taches.scss';
 import * as crudTaches from '../services/crud-taches';
 import { useState, useEffect } from 'react';
 
+
+
+
 export default function Taches({etatTaches, utilisateur}) {
   const uid = utilisateur.uid;
   const [taches, setTaches] = etatTaches;
@@ -16,6 +19,34 @@ export default function Taches({etatTaches, utilisateur}) {
    )
  , [setTaches, uid]);
   
+
+/**ajouter function supprimer tache */
+function supprimerTache(idTache){
+  crudTaches.supprimer(utilisateur.uid, idTache).then(
+    ()=> {
+      setTaches(taches.filter(d => d.id !== idTache))
+    }
+  )
+}
+/********************************* */
+
+  function gererBasculerTache(idTache, completee){
+    // Utiliser le id de l'utgilisateur, le id de la tache, et la valeur actuel de l`etat pour demander
+    // a Firestore de modifier cette tache pour cet utilisateur pour que la valeur de propriete completee
+    // soit le contraire de etatActuel
+    crudTaches.changeEtatTache(uid, idTache, completee).then(  ()=>{
+      // Modifier l etat des taches pour que la tache identifiee par idTache dans le tableau taches soit basculee
+      // aussi dans l affichage
+      setTaches(taches.map(tache => {
+        if(tache.id == idTache){
+          tache.completee = !completee;
+        }
+        return tache;
+      })
+    )
+    }
+    )
+}
 
   /**
    * Gérer le formulaire d'ajout de nouvelle tâche en appelant la méthode 
@@ -49,7 +80,7 @@ export default function Taches({etatTaches, utilisateur}) {
       </form>
       <div className="listeTaches">
         {
-          taches.map(tache => <Tache key={tache.id} {... tache} />)
+          taches.map(tache => <Tache key={tache.id} {... tache} gererBasculerTache={gererBasculerTache} supprimerTache={supprimerTache} />)
         }
       </div>
     </section>

@@ -8,6 +8,7 @@ import { instanceFirestore } from './firebase-initialisation';
  * @param {Object} tache document à ajouter aux tâches de l'utilisateur
  * @returns {Promise<null>} Promesse sans paramètre
  */
+
 export async function creer(uid, tache) {
   // On ajoute la propriété 'date' à l'objet représentant la tâche en prenant la 
   // date du serveur Firestore.
@@ -18,6 +19,20 @@ export async function creer(uid, tache) {
     );
 }
 
+/* modifier etat tache function*/
+export async function changeEtatTache(uid, idTache, etatActuel){
+  return instanceFirestore.collection(collUtil).doc(uid).collection(collTaches).doc(idTache).update(
+    {
+      completee: !etatActuel
+    }
+  );
+}
+
+/* supprimer function*/
+export async function supprimer(uid,idTache) {
+ instanceFirestore.collection(collUtil).doc(uid).collection(collTaches).doc(idTache).delete();
+}
+
 /**
  * Obtenir toutes les tâches d'un utilisateur
  * @param {string} uid identifiant d'utilisateur Firebase 
@@ -26,7 +41,7 @@ export async function creer(uid, tache) {
 export async function lireTout(uid) {
   const taches = [];
   return instanceFirestore.collection(collUtil).doc(uid).collection(collTaches)
-                .get().then(
+              .orderBy('date','desc').get().then(
                   reponse => reponse.forEach(
                     doc => {
                       taches.push({id: doc.id, ...doc.data()})
